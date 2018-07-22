@@ -2,56 +2,40 @@
 
 Si tratta di un bot Telegram per fornire un aiuto nella gestione delle aste per il FantaGP di F1inGenerale.
 
-In questa prima versione, il bot prevede che ci siano tre tipi di utenti:
-* Gli **amministratori**
-* I **partecipanti** all'asta
-* Gli altri utenti
+Il bot prevede che ci siano tre tipi di utenti: gli **amministratori** (gli unici che possono interagire con il bot usandone i comandi), i **partecipanti** delle aste (che possono fare le offerte) e gli altri utenti che non possono svolgere nessuna operazione.
 
-A seconda della categoria a cui un utente appartiene, esso potrà eseguire o meno determinati comandi.
-
-Segue una documentazione dei comandi esistenti, catalogati per tipo di utente. Al termine si fornirà un esempio d'esecuzione di un'asta ordinaria.
+Segue una descrizione dei comandi esistenti, dopo i quali si fornirà un esempio d'esecuzione di un'asta ordinaria.
 
 ## Comandi
 
-### Amministratori
-
-* **/aggiungiadmin** permette di aggiungere un utente come amministratore del bot. Il comando inserisce un solo utente alla volta che va inserito come parametro attraverso il suo username. Se per esempio vogliamo aggiungere "Pinco" e "Pallino" agli admin del bot, i comandi da dare saranno:
+* **/aggiungiadmin** permette di aggiungere degli utenti come amministratori del bot. Essi vanno inseriti come parametri del comando separati da uno spazio. È necessario usare il loro username, che può essere preceduto dal simbolo @. Se per esempio vogliamo aggiungere "Pinco" e "Pallino" agli admin del bot, lo si può fare nei seguenti modi:
 ```
-    /aggiungiadmin Pinco
-    /aggiungiadmin Pallino
+    /aggiungiadmin @Pinco @Pallino
+    /aggiungiadmin Pinco Pallino
+    /aggiungiadmin @Pinco Pallino
+    /aggiungiadmin Pinco @Pallino
 ``` 
 
-* **/rimuoviadmin** rimuove un amministratore del bot. Come il comando precedente, l'utente è fornito come parametro attraverso il suo username.
+* **/rimuoviadmin** rimuove degli amministratori dal bot. Come il comando precedente, gli utenti sono forniti come parametri attraverso il loro username, eventualmente preceduto da @.
 ```
-    /rimuoviadmin Pinco
-    /rimuoviadmin Pallino
+    /rimuoviadmin @Pinco @Pallino
 ```
 
-* **/aggiungipartecipante** aggiunge un utente tra i partecipanti dell'asta corrente. Analogamente ai comandi precedenti, inserisce un solo utente per volta fornito come parametro tramite username.
+* **/aggiungipartecipanti** aggiunge degli utenti tra i partecipanti dell'asta corrente. Analogamente ai comandi precedenti, inserisce gli utenti forniti come parametro tramite username, eventualmente preceduto da @.
 ```
-    /aggiungipartecipante Rick
-    /aggiungipartecipante Morty
+    /aggiungipartecipanti Rick Morty @BojackHorseman
 ```
     
-* **/rimuovipartecipante** è il duale del comando precedente.
+* **/rimuovipartecipanti** è il duale del comando precedente.
 
-* **/creaasta** inizializza un'asta vuota. Il bot può trovarsi nello stato di nessun'asta attiva oppure di averne una attiva. Questo comando permette di passare dallo stato di "Asta disattivata" a quello di "Asta attiva". Esso non riceve parametri e darà un messaggio di errore se esiste già un'asta attiva.
-
-* **/cancellasta** rimuove l'asta correntemente attiva con tutte le sue informazioni. Fa passare il bot dallo stato di "Asta attiva" a quello di "Asta disattivata". Essendo un'operazione delicata, il bot richiederà una conferma dell'operazione, scrivendo "s" per confermare oppure "n" per annullare. Durante questa fase tutti gli altri comandi sono disabilitati.
+* **/reset** svuota l'asta corrente rimuovendone i partecipanti con i loro saldi e piloti. Essendo un'operazione delicata, il bot richiederà una conferma dell'operazione, scrivendo "s" per confermare oppure "n" per annullare. Durante questa fase tutti gli altri comandi sono disabilitati.
 
 * **/avviaofferta** avvia l'asta per un pilota. Il pilota viene fornito come parametro del comando e farà partire l'asta per i prossimi due minuti. Durante quel periodo di tempo i partecipanti potranno fare le loro offerte, mentre gli altri comandi saranno disabilitati.
 ```
     /avviaofferta Vettel
 ```
-    
-### Partecipanti
 
-* **/b** permette ad un partecipante di fare un'offerta. Esso prende come parametro un numero che indica la quantità di fantamilioni offerti. Se un partecipante offre più soldi di quanti ne ha oppure possiede già due piloti, questo comando ignorerà l'offerta silenziosamente. **ATTENZIONE: se si inserisce un'offerta con il solo numero senza il comando /b davanti, essa verrà IGNORATA dal bot!**
-```
-    /b 20
-```
-    
-### Altri utenti
+* **/fermaofferta** sospende l'asta corrente. Ogni offerta fatta in precedenza viene annullata. Può servire in caso di imprevisti.
 
 * **/mostraadmin** invia una lista degli amministratori del bot.
 
@@ -63,14 +47,11 @@ Segue una documentazione dei comandi esistenti, catalogati per tipo di utente. A
 
 Simuliamo l'esecuzione di un'asta, assumendo che gli amministratori ed i partecipanti si trovino all'interno dello stesso gruppo.
 
-L'amministratore crea l'asta con il comando **/creaasta**. Se richiesto, cancellerà l'asta precedente ancora attiva con **/cancellaasta**.
+L'amministratore prepara l'asta con il comando **/reset**, che rimuove informazioni rimaste da eventuali aste precedenti.
 
 L'amministratore aggiunge i partecipanti dell'asta. Questo è un passaggio **IMPORTANTISSIMO**: se si dimentica di fare ciò, tutte le offerte fatte dai partecipanti non verranno considerate!
 ```
-    /aggiungipartecipante A
-    /aggiungipartecipante B
-    /aggiungipartecipante C
-    ...
+    /aggiungipartecipanti A B C...
 ```
     
 A questo punto si può dare inizio alle offerte. L'amministratore dà il via con il seguente comando:
@@ -78,28 +59,37 @@ A questo punto si può dare inizio alle offerte. L'amministratore dà il via con
     /avviaasta Hamilton
 ```
     
-I partecipanti dovranno fare le loro offerte con l'apposito comando:
+I partecipanti dovranno fare le loro offerte semplicemente scrivendo la quantità di fantamilioni che vogliono pagare, esattamente come farebbero in un'asta manuale senza bot.
 ```
-    /b 10
-    /b 20
-    /b 50
+    A: 10
+    B: 20
+    C: 50
     ...
 ```
     
 Allo scadere del tempo, il bot assegnerà il pilota al partecipante che ha dato l'offerta maggiore. Il risultato si potrà verificare tramite i comandi **/mostrasaldo** e **/mostrapilotiassegnati**.
 
-Finite tutte le offerte e registrate nel leggendario database di F1inGenerale, si può resettare il bot con **/cancellaasta**.
+Finite tutte le offerte e registrate nel leggendario database di F1inGenerale, si può resettare il bot con **/reset**.
 
 ## Note importanti
 
 * Gli utenti (sia amministratori che partecipanti) sono identificati con il loro **USERNAME**. Se un utente cambia il proprio username durante l'asta, il bot non lo riconoscerà più (né come amministratore né come partecipante).
-* I comandi che aggiungono e rimuovono utenti operano su un solo utente alla volta. Esso deve essere fornito tramite username **SENZA** il simbolo @ davanti.
 * Il comando **/rimuoviadmin** non permette di eliminare se stessi dagli amministratori. Inoltre esistono alcuni admin definiti "supremi" che non possono essere cancellati da nessuno. Questo per prevenire la situazione paradossale in cui il bot si ritrovi senza nessun admin e nessuno lo possa più controllare senza un hard reset.
 * Ribadiamo che all'inizio di ogni asta l'amministratore deve ricordarsi di aggiungere i partecipanti.
-* I partecipanti devono ricordarsi di usare il comando /b per fare le loro offerte, se non vogliono che siano ignorate.
 * Il bot può gestire una sola asta alla volta ed il suo stato è **GLOBALE**. Per questo motivo **NON** può essere utilizzato contemporaneamente su due o più gruppi. Esso vedrebbe i diversi gruppi come appartenenti ad un'unica asta più grande, di conseguenza i partecipanti si interferirebbero tra loro creando un macello.
+* Si sconsiglia l'uso del comando **/fermaofferta** a pochi secondi dal termine dell'asta. Non essendoci sistemi di lock sulle variabili (per semplicità ed efficienza), usare questo comando allo scadere dell'asta potrebbe generare comportamenti indeterminati.
 
 ## Changelog
+
+Versione 2:
+* Tutti i comandi del bot sono attivabili solo dagli amministratori, anche quelli che non alterano lo stato.
+* Rimossi i comandi per aggiungere e cancellare un'asta: ve ne è sempre una attiva. Esiste solo un comando per resettarla.
+* Aggiunti messaggi di risposta se un partecipante fa un'offerta senza avere abbastanza soldi o se possiede già due piloti.
+* Si possono aggiungere/rimuovere più admin e partecipanti chiamando il comando apposito una sola volta.
+* Si può usare @ all'inizio di uno username quando si aggiungono/rimuovono admin e partecipanti.
+* Viene mostrato un messaggio di risposta se si invoca un comando che richiede argomenti ma non ce ne sono.
+* **Rimosso il comando /b:** gli utenti devono solo scrivere un numero per fare un'offerta.
+* Aggiunto comando **/fermaofferta** per sospendere l'asta dopo che è stata avviata.
 
 Versione 1:
 * First release
