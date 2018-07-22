@@ -16,16 +16,22 @@ Segue una documentazione dei comandi esistenti, catalogati per tipo di utente. A
 ### Amministratori
 
 * **/aggiungiadmin** permette di aggiungere un utente come amministratore del bot. Il comando inserisce un solo utente alla volta che va inserito come parametro attraverso il suo username. Se per esempio vogliamo aggiungere "Pinco" e "Pallino" agli admin del bot, i comandi da dare saranno:
+```
     /aggiungiadmin Pinco
     /aggiungiadmin Pallino
-    
+``` 
+
 * **/rimuoviadmin** rimuove un amministratore del bot. Come il comando precedente, l'utente è fornito come parametro attraverso il suo username.
+```
     /rimuoviadmin Pinco
     /rimuoviadmin Pallino
+```
 
 * **/aggiungipartecipante** aggiunge un utente tra i partecipanti dell'asta corrente. Analogamente ai comandi precedenti, inserisce un solo utente per volta fornito come parametro tramite username.
+```
     /aggiungipartecipante Rick
     /aggiungipartecipante Morty
+```
     
 * **/rimuovipartecipante** è il duale del comando precedente.
 
@@ -34,12 +40,16 @@ Segue una documentazione dei comandi esistenti, catalogati per tipo di utente. A
 * **/cancellasta** rimuove l'asta correntemente attiva con tutte le sue informazioni. Fa passare il bot dallo stato di "Asta attiva" a quello di "Asta disattivata". Essendo un'operazione delicata, il bot richiederà una conferma dell'operazione, scrivendo "s" per confermare oppure "n" per annullare. Durante questa fase tutti gli altri comandi sono disabilitati.
 
 * **/avviaofferta** avvia l'asta per un pilota. Il pilota viene fornito come parametro del comando e farà partire l'asta per i prossimi due minuti. Durante quel periodo di tempo i partecipanti potranno fare le loro offerte, mentre gli altri comandi saranno disabilitati.
+```
     /avviaofferta Vettel
+```
     
 ### Partecipanti
 
 * **/b** permette ad un partecipante di fare un'offerta. Esso prende come parametro un numero che indica la quantità di fantamilioni offerti. Se un partecipante offre più soldi di quanti ne ha oppure possiede già due piloti, questo comando ignorerà l'offerta silenziosamente. **ATTENZIONE: se si inserisce un'offerta con il solo numero senza il comando /b davanti, essa verrà IGNORATA dal bot!**
+```
     /b 20
+```
     
 ### Altri utenti
 
@@ -56,19 +66,25 @@ Simuliamo l'esecuzione di un'asta, assumendo che gli amministratori ed i parteci
 L'amministratore crea l'asta con il comando **/creaasta**. Se richiesto, cancellerà l'asta precedente ancora attiva con **/cancellaasta**.
 
 L'amministratore aggiunge i partecipanti dell'asta. Questo è un passaggio **IMPORTANTISSIMO**: se si dimentica di fare ciò, tutte le offerte fatte dai partecipanti non verranno considerate!
+```
     /aggiungipartecipante A
     /aggiungipartecipante B
     /aggiungipartecipante C
     ...
+```
     
 A questo punto si può dare inizio alle offerte. L'amministratore dà il via con il seguente comando:
+```
     /avviaasta Hamilton
+```
     
 I partecipanti dovranno fare le loro offerte con l'apposito comando:
+```
     /b 10
     /b 20
     /b 50
     ...
+```
     
 Allo scadere del tempo, il bot assegnerà il pilota al partecipante che ha dato l'offerta maggiore. Il risultato si potrà verificare tramite i comandi **/mostrasaldo** e **/mostrapilotiassegnati**.
 
