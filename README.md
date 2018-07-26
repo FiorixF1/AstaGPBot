@@ -8,25 +8,13 @@ Segue una descrizione dei comandi esistenti, dopo i quali si fornirà un esempio
 
 ## Comandi
 
-* **/aggiungiadmin** permette di aggiungere degli utenti come amministratori del bot. Essi vanno inseriti come parametri del comando separati da uno spazio. È necessario usare il loro username, che può essere preceduto dal simbolo @. Se per esempio vogliamo aggiungere "Pinco" e "Pallino" agli admin del bot, lo si può fare nei seguenti modi:
-```
-    /aggiungiadmin @Pinco @Pallino
-    /aggiungiadmin Pinco Pallino
-    /aggiungiadmin @Pinco Pallino
-    /aggiungiadmin Pinco @Pallino
-``` 
+* **/aggiungiadmin** permette di aggiungere un utente come amministratore del bot. Il comando si utilizza rispondendo ad un messaggio dell'utente che vogliamo aggiungere.
 
-* **/rimuoviadmin** rimuove degli amministratori dal bot. Come il comando precedente, gli utenti sono forniti come parametri attraverso il loro username, eventualmente preceduto da @.
-```
-    /rimuoviadmin @Pinco @Pallino
-```
+* **/rimuoviadmin** rimuove un amministratore dal bot. Il comando si utilizza rispondendo ad un messaggio dell'utente che vogliamo rimuovere.
 
-* **/aggiungipartecipanti** aggiunge degli utenti tra i partecipanti dell'asta corrente. Analogamente ai comandi precedenti, inserisce gli utenti forniti come parametro tramite username, eventualmente preceduto da @.
-```
-    /aggiungipartecipanti Rick Morty @BojackHorseman
-```
+* **/aggiungipartecipante** aggiunge un utente tra i partecipanti dell'asta corrente. Analogamente ai comandi precedenti, si utilizza rispondendo ad un messaggio dell'utente che vogliamo aggiungere.
     
-* **/rimuovipartecipanti** è il duale del comando precedente.
+* **/rimuovipartecipante** è il duale del comando precedente.
 
 * **/reset** svuota l'asta corrente rimuovendone i partecipanti con i loro saldi e piloti. Essendo un'operazione delicata, il bot richiederà una conferma dell'operazione, scrivendo "s" per confermare oppure "n" per annullare. Durante questa fase tutti gli altri comandi sono disabilitati.
 
@@ -50,13 +38,10 @@ Simuliamo l'esecuzione di un'asta, assumendo che gli amministratori ed i parteci
 L'amministratore prepara l'asta con il comando **/reset**, che rimuove informazioni rimaste da eventuali aste precedenti.
 
 L'amministratore aggiunge i partecipanti dell'asta. Questo è un passaggio **IMPORTANTISSIMO**: se si dimentica di fare ciò, tutte le offerte fatte dai partecipanti non verranno considerate!
-```
-    /aggiungipartecipanti A B C...
-```
     
 A questo punto si può dare inizio alle offerte. L'amministratore dà il via con il seguente comando:
 ```
-    /avviaasta Hamilton
+    /avviaofferta Hamilton
 ```
     
 I partecipanti dovranno fare le loro offerte semplicemente scrivendo la quantità di fantamilioni che vogliono pagare, esattamente come farebbero in un'asta manuale senza bot.
@@ -73,13 +58,41 @@ Finite tutte le offerte e registrate nel leggendario database di F1inGenerale, s
 
 ## Note importanti
 
-* Gli utenti (sia amministratori che partecipanti) sono identificati con il loro **USERNAME**. Se un utente cambia il proprio username durante l'asta, il bot non lo riconoscerà più (né come amministratore né come partecipante).
 * Il comando **/rimuoviadmin** non permette di eliminare se stessi dagli amministratori. Inoltre esistono alcuni admin definiti "supremi" che non possono essere cancellati da nessuno. Questo per prevenire la situazione paradossale in cui il bot si ritrovi senza nessun admin e nessuno lo possa più controllare senza un hard reset.
-* Ribadiamo che all'inizio di ogni asta l'amministratore deve ricordarsi di aggiungere i partecipanti.
-* Il bot può gestire una sola asta alla volta ed il suo stato è **GLOBALE**. Per questo motivo **NON** può essere utilizzato contemporaneamente su due o più gruppi. Esso vedrebbe i diversi gruppi come appartenenti ad un'unica asta più grande, di conseguenza i partecipanti si interferirebbero tra loro creando un macello.
-* Si sconsiglia l'uso del comando **/fermaofferta** a pochi secondi dal termine dell'asta. Non essendoci sistemi di lock sulle variabili (per semplicità ed efficienza), usare questo comando allo scadere dell'asta potrebbe generare comportamenti indeterminati.
+* **Ribadiamo** che all'inizio di ogni asta l'amministratore deve ricordarsi di aggiungere i partecipanti!
+* Durante gli ultimi secondi dell'asta, potrebbe verificarsi un bug per cui il bot interrompe il countdown bloccando l'asta. Non è ben chiaro se il bug sia causato dalle API di Telegram o da un rallentamento momentaneo della connessione di rete. In ogni caso, per risvegliare il bot è necessario dare il comando **/fermaofferta** e riavviare l'asta.
+* Nel caso in cui sia necessario riavviare il bot, interrompere tutte le aste in corso e dare il comando nascosto **/serialize**. Esso salverà lo stato attuale del bot nel database in modo che possa essere ripristinato a seguito del riavvio.
+
+## Deployment
+
+Se si vuole eseguire il bot sulla propria macchina, sono necessari i seguenti strumenti:
+* [Python 3.6](https://www.python.org/getit/) o superiore
+* La libreria [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)
+* Un bot di Telegram con la sua API Token da inserire come parametro nel codice e la seguente descrizione dei comandi:
+```
+    aggiungiadmin - Rendi amministratore un utente
+    rimuoviadmin - Rimuovi un utente dagli amministratori
+    aggiungipartecipante - Aggiungi un utente all'asta
+    rimuovipartecipante - Rimuovi un utente dall'asta
+    avviaofferta - Avvia l'asta per un pilota
+    fermaofferta - Annulla l'asta corrente
+    mostraadmin - Mostra la lista degli admin del bot
+    mostrasaldo - Mostra il saldo di ogni partecipante
+    mostrapilotiassegnati - Mostra i piloti di ogni partecipante
+    reset - Cancella i dati dell'asta
+    help - Aiuto
+```
 
 ## Changelog
+
+Versione 3:
+* Gli amministratori ed i partecipanti sono ora identificati tramite il loro ID anziché username.
+* I comandi per aggiungere/rimuovere amministratori e partecipanti si usano inviandoli in risposta ad un messaggio dell'utente interessato.
+* Il bot è diventato utilizzabile contemporaneamente su diverse chat, senza che si interferiscano a vicenda.
+* Lo stato del bot può essere salvato su disco con il comando **/serialize** per essere ripristinato a seguito di un reboot.
+* Aggiunti i comandi **/help** e **/start** che riportano un link a questa pagina.
+* Miglioramento generale del codice con l'uso di nuove classi e dei decoratori per il controllo dell'accesso.
+* Inserita un'immagine del modello a stati finiti del bot.
 
 Versione 2:
 * Tutti i comandi del bot sono attivabili solo dagli amministratori, anche quelli che non alterano lo stato.
